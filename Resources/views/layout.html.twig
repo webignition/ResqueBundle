@@ -1,0 +1,38 @@
+{% extends '::base.html.twig' %}
+
+{% block nav_class_active_admin %} class="active"{% endblock %}
+
+{% block content %}
+
+<ul class="nav nav-tabs">
+    <li class="{% block tab_overview_active %}{% endblock %}">
+        <a href="{{ path('glit_resque_default_index') }}">{% trans %}Overview{% endtrans %}</a>
+    </li>
+    <li class="{% block tab_working_active %}{% endblock %}">
+        <a href="{{ path('glit_resque_default_index') }}">{% trans %}Working{% endtrans %}</a>
+    </li>
+    <li class="{% block tab_failed_active %}{% endblock %}">
+        <a href="{{ path('glit_resque_default_failed') }}">{% trans %}Failed{% endtrans %}</a>
+    </li>
+    <li class="{% block tab_queues_active %}{% endblock %}">
+        <a href="{{ path('glit_resque_default_index') }}">{% trans %}Queues{% endtrans %}</a>
+    </li>
+    <li class="{% block tab_workers_active %}{% endblock %}">
+        <a href="{{ path('glit_resque_default_index') }}">{% trans %}Workers{% endtrans %}</a>
+    </li>
+    <li class="dropdown {% block tab_stats_active %}{% endblock %}">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            {% trans %}Stats{% endtrans %}
+            <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+            <li><a href="{{ path('glit_resque_default_statsresque') }}">Resque</a></li>
+            <li><a href="{{ path('glit_resque_default_statsredis') }}">Redis</a></li>
+            <li><a href="{{ path('glit_resque_default_statskeys') }}">{% trans %}Keys{% endtrans %}</a></li>
+        </ul>
+    </li>
+</ul>
+
+{% block layout_content %}{% endblock %}
+
+{% endblock %}

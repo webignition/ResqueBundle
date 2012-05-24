@@ -1,0 +1,64 @@
+{% extends 'GlitResqueBundle::layout.html.twig' %}
+
+{% block tab_overview_active %} active{% endblock %}
+
+{% block layout_content %}
+<section class="row-fluid">
+    <h1>{% trans %}Queues{% endtrans %}</h1>
+    <p>
+    <small>{% trans %}The list below contains all the registered queues with the number of jobs currently in the queue. Select a queue from above to view all jobs currently pending on the queue.{% endtrans %}</small>
+    </p>
+
+    <table class="table table-bordered span6">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Jobs</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, size in queues %}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ size }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+
+<h1>{% trans with {'%workers_active%': 0, '%workers_count%': 0} %}%workers_active% of %workers_count% Workers Working{% endtrans %}</h1>
+<p>
+    <small>{% trans %}The list below contains all workers which are currently running a job.{% endtrans %}</small>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Where</th>
+        <th>Queue</th>
+        <th>Processing</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% if workers|length == 0 %}
+        <tr>
+            <td colspan="4" class="table-empty">
+                Nothing is happening right now...
+            </td>
+        </tr>
+        {% else %}
+        {% for worker in workers %}
+        <tr>
+            <td></td>
+            <td>{{ worker.where }}</td>
+            <td>{{ worker.queue }}</td>
+            <td>{{ worker.job }}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

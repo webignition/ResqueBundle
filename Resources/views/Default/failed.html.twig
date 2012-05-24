@@ -1,0 +1,52 @@
+{% extends 'GlitResqueBundle::layout.html.twig' %}
+
+{% block tab_failed_active %}active{% endblock %}
+
+{% block layout_content %}
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th></th>
+        <th>{% trans %}Job{% endtrans %}</th>
+        <th>{% trans %}Queue{% endtrans %}</th>
+        <th>{% trans %}Worker{% endtrans %}</th>
+        <th>{% trans %}Failed at{% endtrans %}</th>
+        <th>{% trans %}Error{% endtrans %}</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for index, job in data %}
+        <tr>
+            <td>{{ index }}</td>
+            <td>{{ job.payload.class }}{% if job.payload.id is defined %}<br />{{ job.payload.id }}{% endif %}</td>
+            <td>{{ job.queue }}</td>
+            <td>{{ job.worker }}</td>
+            <td>{{ job.failed_at }}</td>
+            <td>
+                <a href="#modal-{{index}}" data-toggle="modal">{{ job.exception }}</a>
+                <div id="modal-{{index}}" class="modal" style="display: none">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal">×</button>
+                        <h3>Error viewer</h3>
+                    </div>
+                    <div class="modal-body">
+                        {{ job.error | debug | raw }}
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </td>
+            <td>
+                {% if job.retried_at is defined %}
+                    {% trans with {'%retried_at%': job.retried_at} %}Retried at %retried_at% {% endtrans %}<br />
+                {% else %}
+                <a href="{{ path('glit_resque_default_requeuefailed', {'i': index}) }}" class="btn">{% trans %}Retry{% endtrans %}</a>
+                {% endif %}
+                <a href="{{ path('glit_resque_default_deletefailed', {'i': index}) }}" class="btn btn-danger">{% trans %}Remove{% endtrans %}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

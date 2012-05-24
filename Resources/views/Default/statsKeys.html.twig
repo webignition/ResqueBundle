@@ -1,0 +1,19 @@
+{% extends 'GlitResqueBundle::layout.html.twig' %}
+
+{% block tab_stats_active %}active{% endblock %}
+
+{% block layout_content %}
+
+<table class="table table-bordered">
+    <tbody>
+        {% for key in keys %}
+        <tr>
+            <td>{{ key.id }}</td>
+            <td>{{ key.type }}</td>
+            <td>{{ key.data | debug | raw }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

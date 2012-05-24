@@ -1,0 +1,28 @@
+{% extends 'GlitResqueBundle::layout.html.twig' %}
+
+{% block tab_stats_active %}active{% endblock %}
+
+{% block layout_content %}
+
+<table class="table table-striped borders span6 offset3">
+    <tbody>
+        <tr>
+            <td>{% trans %}failed{% endtrans %}</td>
+            <td>{{ failed }}</td>
+        </tr>
+        <tr>
+            <td>{% trans %}processed{% endtrans %}</td>
+            <td>{{ processed }}</td>
+        </tr>
+        <tr>
+            <td>{% trans %}queues{% endtrans %}</td>
+            <td>{{ queues }}</td>
+        </tr>
+        <tr>
+            <td>{% trans %}workers{% endtrans %}</td>
+            <td>{{ workers }}</td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}
