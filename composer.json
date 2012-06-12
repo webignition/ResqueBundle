@@ -1,0 +1,21 @@
+{
+    "name": "glit/resque-bundle",
+    "description": "Adds php-resque to Symfony2",
+    "keywords": ["resque"],
+    "type": "symfony-bundle",
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "William POTTIER",
+            "email": "wpottier@allprogrammic.com"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "2.*",
+        "glit/php-resque": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Glit\\ResqueBundle": "" }
+    },
+    "target-dir": "Glit/ResqueBundle"
+}
