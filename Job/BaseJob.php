@@ -16,7 +16,7 @@ abstract class BaseJob extends \Resque\Job\AbstractInstance {
     /**
      * Shortcut to return the Doctrine Registry service.
      *
-     * @return \Symfony\Bundle\DoctrineBundle\Registry
+     * @return \Doctrine\Bundle\DoctrineBundle\Registry
      *
      * @throws \LogicException If DoctrineBundle is not available
      */
