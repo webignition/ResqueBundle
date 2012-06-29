@@ -1,14 +1,9 @@
 <?php
 namespace Glit\ResqueBundle\Job;
 
-use Symfony\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class BaseJob  {
-
-    public $args;
-    public $job;
-    public $queue;
+abstract class BaseJob extends \Resque\Job\AbstractInstance {
 
     /** @var \Symfony\Component\DependencyInjection\ContainerInterface */
     private $container;
@@ -21,7 +16,7 @@ class BaseJob  {
     /**
      * Shortcut to return the Doctrine Registry service.
      *
-     * @return Registry
+     * @return \Symfony\Bundle\DoctrineBundle\Registry
      *
      * @throws \LogicException If DoctrineBundle is not available
      */
@@ -32,13 +27,6 @@ class BaseJob  {
         }
 
         return $this->get('doctrine');
-    }
-
-    /**
-     * @return \Glit\GitoliteBundle\Admin\Gitolite
-     */
-    protected function getGitoliteAdmin () {
-        return $this->get('glit_gitolite.admin');
     }
 
     /**
@@ -58,5 +46,4 @@ class BaseJob  {
     protected function get($serviceId) {
         return $this->container->get($serviceId);
     }
-
 }
