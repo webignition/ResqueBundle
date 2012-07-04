@@ -103,7 +103,7 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsKeysAction () {
-        $ids = explode(' ', \Resque\Resque::redis()->keys('*'));
+        $ids = \Resque\Resque::redis()->keys('*');
 
         $keys = array();
         foreach ($ids as $key) {
