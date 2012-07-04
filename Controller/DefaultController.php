@@ -118,6 +118,9 @@ class DefaultController extends Controller {
                 case 'string':
                     $data = \Resque\Resque::redis()->get($key);
                     break;
+                default:
+                    $data = null;
+                    break;
             }
 
             $keys[] = array(
