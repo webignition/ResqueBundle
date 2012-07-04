@@ -20,7 +20,7 @@ class DefaultController extends Controller {
 
         $workers = array();
         foreach (\Resque\Worker::all() as $worker) {
-            /** @var $worker \Resque_Worker */
+            /** @var $worker \Resque\Worker */
             list($host, $pid, $_) = explode(':', $worker->__toString());
             $data = $worker->job();
             if(!empty($data)) {
@@ -103,20 +103,27 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsKeysAction () {
-        $ids = \Resque\Resque::redis()->keys('*');
+        $redis = \Resque\Resque::redis();
+
+        $ids = $redis->keys('*');
 
         $keys = array();
+
         foreach ($ids as $key) {
-            $type = \Resque\Resque::redis()->type($key);
+            // Remove namespace from key
+            $key = substr($key, strlen(\Resque\Redis::getNamespace()));
+
+            // Find type
+            $type = $redis->type($key);
             switch($type) {
                 case 'set':
-                    $data = \Resque\Resque::redis()->smembers($key);
+                    $data = $redis->smembers($key);
                     break;
                 case 'list':
-                    $data = \Resque\Resque::redis()->lrange($key, 0, -1);
+                    $data = $redis->lrange($key, 0, -1);
                     break;
                 case 'string':
-                    $data = \Resque\Resque::redis()->get($key);
+                    $data = $redis->get($key);
                     break;
                 default:
                     $data = null;
