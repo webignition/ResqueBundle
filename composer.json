@@ -17,5 +17,4 @@
     "autoload": {
         "psr-0": { "Glit\\ResqueBundle": "" }
     },
-    "target-dir": "Glit/ResqueBundle"
 }
