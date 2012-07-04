@@ -61,25 +61,25 @@ class Worker implements ContainerAwareInterface {
     private function loglevel() {
         switch($this->logging) {
             case 'verbose' :
-                return \Resque_Worker::LOG_VERBOSE;
+                return \Resque\Worker::LOG_VERBOSE;
             case 'normal' :
-                return \Resque_Worker::LOG_NORMAL;
+                return \Resque\Worker::LOG_NORMAL;
             default:
-                return \Resque_Worker::LOG_NONE;
+                return \Resque\Worker::LOG_NONE;
         }
     }
 
     public function daemon() {
         // Register the job instance loader
-        \Resque_Event::listen('createInstance', array($this, 'createJobInstance'));
+        \Resque\Event::listen('createInstance', array($this, 'createJobInstance'));
 
         // Set redis backend
         // TODO : use configuration
-        \Resque::setBackend('127.0.0.1:6379');
+        \Resque\Resque::setBackend('127.0.0.1:6379');
 
         if(strpos($this->queue, ':') !== false) {
             list($namespace, $queue) = explode(':', $this->queue);
-            \Resque_Redis::prefix($namespace);
+            \Resque\Redis::prefix($namespace);
             $this->queue = $queue;
         }
 
@@ -101,14 +101,14 @@ class Worker implements ContainerAwareInterface {
     }
 
     public function work() {
-        $worker = new \Resque_Worker(explode(',', $this->queue));
+        $worker = new \Resque\Worker(explode(',', $this->queue));
         $worker->logLevel = $this->loglevel();
         $worker->work($this->interval);
 
         $this->logger->info(sprintf('Starting worker %s', $worker));
     }
 
-    public function createJobInstance(\Resque_Event_CreateInstance $event) {
+    public function createJobInstance(\Resque\Event\CreateInstance $event) {
         $serviceId = $event->getJob()->payload['class'];
 
         if($this->container->has($serviceId)) {
