@@ -51,7 +51,7 @@ class Worker implements ContainerAwareInterface {
 
         if ($count > 1) {
             if (!function_exists('pntl_fork')) {
-               throw new \Exception('pcntl_fork unavailable to use more than one fork count.');
+               //throw new \Exception('pcntl_fork unavailable to use more than one fork count.');
             }
         }
 
