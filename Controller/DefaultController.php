@@ -14,12 +14,12 @@ class DefaultController extends Controller {
      */
     public function indexAction () {
         $queues = array();
-        foreach (\Resque::queues() as $queue) {
-            $queues[$queue] = \Resque::size($queue);
+        foreach (\Resque\Resque::queues() as $queue) {
+            $queues[$queue] = \Resque\Resque::size($queue);
         }
 
         $workers = array();
-        foreach (\Resque_Worker::all() as $worker) {
+        foreach (\Resque\Worker::all() as $worker) {
             /** @var $worker \Resque_Worker */
             list($host, $pid, $_) = explode(':', $worker->__toString());
             $data = $worker->job();
@@ -43,7 +43,7 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function failedAction() {
-        $faileds = \Resque::redis()->lrange('failed', 0, -1);
+        $faileds = \Resque\Resque::redis()->lrange('failed', 0, -1);
 
         $data = array();
         foreach($faileds as $index => $fail) {
@@ -57,7 +57,7 @@ class DefaultController extends Controller {
      * @Route("/failed/{i}/requeue")
      */
     public function requeueFailedAction($i) {
-        \Resque_Failure::requeue($i);
+        \Resque\Failure::requeue($i);
 
         return $this->redirect($this->generateUrl('glit_resque_default_failed'));
     }
@@ -67,8 +67,8 @@ class DefaultController extends Controller {
      */
     public function deleteFailedAction($i) {
         $val = rand(0x000000, 0xffffff);
-        \Resque::redis()->lset('failed', $i, $val);
-        \Resque::redis()->lrem('failed', 1, $val);
+        \Resque\Resque::redis()->lset('failed', $i, $val);
+        \Resque\Resque::redis()->lrem('failed', 1, $val);
 
         return $this->redirect($this->generateUrl('glit_resque_default_failed'));
     }
@@ -80,12 +80,12 @@ class DefaultController extends Controller {
     public function statsResqueAction () {
         return array(
             'environment' => '',
-            'failed'      => \Resque_Stat::get('failed'),
+            'failed'      => \Resque\Stat::get('failed'),
             'pending'     => 0,
-            'processed'   => \Resque_Stat::get('processed'),
-            'queues'      => count(\Resque::queues()),
+            'processed'   => \Resque\Stat::get('processed'),
+            'queues'      => count(\Resque\Resque::queues()),
             'servers'     => '',
-            'workers'     => count(\Resque_Worker::all()),
+            'workers'     => count(\Resque\Worker::all()),
             'working'     => 0
         );
     }
@@ -103,20 +103,20 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsKeysAction () {
-        $ids = explode(' ', \Resque::redis()->keys('*'));
+        $ids = explode(' ', \Resque\Resque::redis()->keys('*'));
 
         $keys = array();
         foreach ($ids as $key) {
-            $type = \Resque::redis()->type($key);
+            $type = \Resque\Resque::redis()->type($key);
             switch($type) {
                 case 'set':
-                    $data = \Resque::redis()->smembers($key);
+                    $data = \Resque\Resque::redis()->smembers($key);
                     break;
                 case 'list':
-                    $data = \Resque::redis()->lrange($key, 0, -1);
+                    $data = \Resque\Resque::redis()->lrange($key, 0, -1);
                     break;
                 case 'string':
-                    $data = \Resque::redis()->get($key);
+                    $data = \Resque\Resque::redis()->get($key);
                     break;
             }
 
