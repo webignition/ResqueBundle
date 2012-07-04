@@ -20,13 +20,24 @@
         {% for index, job in data %}
         <tr>
             <td>{{ index }}</td>
-            <td>{{ job.payload.class }}{% if job.payload.id is defined %}<br />{{ job.payload.id }}{% endif %}</td>
+            <td><a href="#modal-payload-{{index}}" data-toggle="modal">{{ job.payload.class }}</a>{% if job.payload.id is defined %}<br />{{ job.payload.id }}{% endif %}
+                <div id="modal-payload-{{index}}" class="modal" style="display: none">
+                    <div class="modal-header">
+                        <button class="close" data-dismiss="modal">×</button>
+                        <h3>Payload viewer</h3>
+                    </div>
+                    <div class="modal-body">
+                        {{ job.payload | debug | raw }}
+                    </div>
+                    <div class="modal-footer"></div>
+                </div>
+            </td>
             <td>{{ job.queue }}</td>
             <td>{{ job.worker }}</td>
             <td>{{ job.failed_at }}</td>
             <td>
-                <a href="#modal-{{index}}" data-toggle="modal">{{ job.exception }}</a>
-                <div id="modal-{{index}}" class="modal" style="display: none">
+                <a href="#modal-error-{{index}}" data-toggle="modal">{{ job.exception }}</a>
+                <div id="modal-error-{{index}}" class="modal" style="display: none">
                     <div class="modal-header">
                         <button class="close" data-dismiss="modal">×</button>
                         <h3>Error viewer</h3>
