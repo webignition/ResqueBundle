@@ -10,11 +10,17 @@
             "email": "wpottier@allprogrammic.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
-        "symfony/framework-bundle": "2.*",
+        "symfony/framework-bundle": "2.1.*",
         "glit/resque": "dev-master"
     },
     "autoload": {
         "psr-0": { "Glit\\ResqueBundle": "" }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.2.x-dev"
+        }
+    }
 }
