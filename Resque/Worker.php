@@ -87,12 +87,10 @@ class Worker implements ContainerAwareInterface {
     }
 
     public function daemon() {
+        $this->configureResque();
+        
         // Register the job instance loader
         \Resque\Event::listen('createInstance', array($this, 'createJobInstance'));
-
-        // Set redis backend
-        \Resque\Resque::setBackend($this->backend);
-        \Resque\Resque::redis()->prefix($this->prefix.':resque');
 
         if(strpos($this->queue, ':') !== false) {
             list($namespace, $queue) = explode(':', $this->queue);
@@ -132,5 +130,16 @@ class Worker implements ContainerAwareInterface {
             $event->setInstance($this->container->get($serviceId));
         }
     }
-
+    
+    public function all() {
+        $this->configureResque();
+        
+        return \Resque\Worker::all();
+    }
+    
+    protected function configureResque() {
+        // Set redis backend
+        \Resque\Resque::setBackend($this->backend);
+        \Resque\Resque::redis()->prefix($this->prefix . ':resque');
+    }
 }
