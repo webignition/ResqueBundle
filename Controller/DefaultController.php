@@ -92,7 +92,6 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsKeysAction () {
-        $this->configureResque();
         $ids = $this->get('glit_resque.resque_manager')->getAllKeys();
 
         $keys = array();
