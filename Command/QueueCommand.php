@@ -31,7 +31,7 @@ EOF
             $args = json_decode($input->getArgument('args'));
         }
 
-        $job = Queue::add($input->getArgument('job'), $input->getArgument('queue_name'), $args);
+        $job = $this->getContainer()->get('glit_resque.queue_manager')->add($input->getArgument('job'), $input->getArgument('queue_name'), $args);
         $output->writeln("Job captured. Input at {$input->getArgument('queue_name')} queue. Job id {$job}");
     }
 }

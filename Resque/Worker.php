@@ -22,6 +22,23 @@ class Worker implements ContainerAwareInterface {
     private $fork_count = 1;
 
     /**
+     *
+     * @var string
+     */
+    private $backend;
+    
+    /**
+     *
+     * @var string 
+     */
+    private $prefix;
+    
+    public function __construct($backend, $prefix) {
+        $this->backend = $backend;
+        $this->prefix = $prefix;
+    }
+
+    /**
      * Sets the Container.
      *
      * @param ContainerInterface $container A ContainerInterface instance
@@ -74,8 +91,8 @@ class Worker implements ContainerAwareInterface {
         \Resque\Event::listen('createInstance', array($this, 'createJobInstance'));
 
         // Set redis backend
-        // TODO : use configuration
-        \Resque\Resque::setBackend('127.0.0.1:6379');
+        \Resque\Resque::setBackend($this->backend);
+        \Resque\Resque::redis()->prefix($this->prefix.':resque');
 
         if(strpos($this->queue, ':') !== false) {
             list($namespace, $queue) = explode(':', $this->queue);

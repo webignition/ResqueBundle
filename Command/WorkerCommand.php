@@ -42,8 +42,7 @@ EOF
             }
         }
 
-        $worker = new \Glit\ResqueBundle\Resque\Worker();
-        $worker->setContainer($this->getContainer());
+        $worker = $this->getContainer()->get('glit_resque.worker_manager');
         $worker->defineQueue($input->getArgument('queue'));
         $worker->verbose($input->getOption('log'));
         $worker->setInterval($input->getOption('interval'));
