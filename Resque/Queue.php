@@ -34,9 +34,14 @@ class Queue {
         return \Resque\Resque::queues();
     }
     
+    public function size($queue) {
+        $this->configureResque();
+        return \Resque\Resque::size($queue);
+    }
+    
     protected function configureResque() {
         // Set redis backend
         \Resque\Resque::setBackend($this->backend);
-        \Resque\Resque::redis()->prefix($this->prefix.':resque');
+        \Resque\Resque::redis()->prefix($this->prefix.':resque:');
     }
 }
