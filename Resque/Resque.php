@@ -2,7 +2,7 @@
 
 namespace Glit\ResqueBundle\Resque;
 
-class Queue {
+class Resque {
 
     /**
      *
