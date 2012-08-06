@@ -43,7 +43,7 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function failedAction() {
-        $faileds = \Resque\Resque::redis()->lrange('failed', 0, -1);
+        $faileds = $this->get('glit_resque.resque_manager')->getFaileds();
 
         $data = array();
         foreach($faileds as $index => $fail) {
@@ -57,7 +57,7 @@ class DefaultController extends Controller {
      * @Route("/failed/{i}/requeue")
      */
     public function requeueFailedAction($i) {
-        \Resque\Failure::requeue($i);
+        $this->get('glit_resque.resque_manager')->requeueFailed($i);
 
         return $this->redirect($this->generateUrl('glit_resque_default_failed'));
     }
@@ -66,10 +66,8 @@ class DefaultController extends Controller {
      * @Route("/failed/{i}/delete")
      */
     public function deleteFailedAction($i) {
-        $val = rand(0x000000, 0xffffff);
-        \Resque\Resque::redis()->lset('failed', $i, $val);
-        \Resque\Resque::redis()->lrem('failed', 1, $val);
-
+        $this->get('glit_resque.resque_manager')->deleteFailed($i);
+        
         return $this->redirect($this->generateUrl('glit_resque_default_failed'));
     }
 
@@ -78,16 +76,7 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsResqueAction () {
-        return array(
-            'environment' => '',
-            'failed'      => \Resque\Stat::get('failed'),
-            'pending'     => 0,
-            'processed'   => \Resque\Stat::get('processed'),
-            'queues'      => count(\Resque\Resque::queues()),
-            'servers'     => '',
-            'workers'     => count(\Resque\Worker::all()),
-            'working'     => 0
-        );
+        return $this->get('glit_resque.resque_manager')->getStats();
     }
 
     /**
@@ -103,33 +92,14 @@ class DefaultController extends Controller {
      * @Template()
      */
     public function statsKeysAction () {
-        $redis = \Resque\Resque::redis();
-
-        $ids = $redis->keys('*');
+        $this->configureResque();
+        $ids = $this->get('glit_resque.resque_manager')->getAllKeys();
 
         $keys = array();
 
         foreach ($ids as $key) {
-            // Remove namespace from key
-            $key = substr($key, strlen(\Resque\Redis::getNamespace()));
-
-            // Find type
-            $type = $redis->type($key);
-            switch($type) {
-                case 'set':
-                    $data = $redis->smembers($key);
-                    break;
-                case 'list':
-                    $data = $redis->lrange($key, 0, -1);
-                    break;
-                case 'string':
-                    $data = $redis->get($key);
-                    break;
-                default:
-                    $data = null;
-                    break;
-            }
-
+            list($type, $data) = $ids = $this->get('glit_resque.resque_manager')->getKeyInformation($key);
+            
             $keys[] = array(
                 'id' => $key,
                 'type' => $type,
