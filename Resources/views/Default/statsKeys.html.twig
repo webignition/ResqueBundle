@@ -10,7 +10,7 @@
         <tr>
             <td>{{ key.id }}</td>
             <td>{{ key.type }}</td>
-            <td>{{ key.data | debug | raw }}</td>
+            <td>{{ key.data | resque_debug | raw }}</td>
         </tr>
         {% endfor %}
     </tbody>
