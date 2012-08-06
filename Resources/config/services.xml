@@ -7,11 +7,17 @@
     <parameters>
         <parameter key="glit_resque.redis_backend">127.0.0.1:6379</parameter>
         
+        <parameter key="glit_resque.resque.class">Glit\ResqueBundle\Resque\Resque</parameter>
         <parameter key="glit_resque.queue.class">Glit\ResqueBundle\Resque\Queue</parameter>
         <parameter key="glit_resque.worker.class">Glit\ResqueBundle\Resque\Worker</parameter>
     </parameters>
 
     <services>
+        <service id="glit_resque.resque_manager" class="%glit_resque.resque.class%">
+            <argument>%glit_resque.redis_backend%</argument>
+            <argument>%glit_resque.prefix%</argument>
+        </service>
+        
         <service id="glit_resque.queue_manager" class="%glit_resque.queue.class%">
             <argument>%glit_resque.redis_backend%</argument>
             <argument>%glit_resque.prefix%</argument>

@@ -14,7 +14,7 @@ class DefaultController extends Controller {
      */
     public function indexAction () {
         $queues = array();
-        foreach (\Resque\Resque::queues() as $queue) {
+        foreach ($this->get('glit_resque.queue_manager')->queues() as $queue) {
             $queues[$queue] = \Resque\Resque::size($queue);
         }
 

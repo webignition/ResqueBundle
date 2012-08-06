@@ -21,12 +21,22 @@ class Queue {
     }
 
     public function add($job_name, $queue_name, $args = null) {
-        // Set redis backend
-        \Resque\Resque::setBackend($this->backend);
-        \Resque\Resque::redis()->prefix($this->prefix.':resque');
-
+        $this->configureResque();
+        
         $jobId = \Resque\Resque::enqueue($queue_name, $job_name, $args, true);
 
         return $jobId;
+    }
+    
+    public function queues() {
+        $this->configureResque();
+        
+        return \Resque\Resque::queues();
+    }
+    
+    protected function configureResque() {
+        // Set redis backend
+        \Resque\Resque::setBackend($this->backend);
+        \Resque\Resque::redis()->prefix($this->prefix.':resque');
     }
 }
