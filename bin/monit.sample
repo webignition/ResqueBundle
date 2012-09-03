@@ -1,0 +1,4 @@
+check process resque-daemon with pidfile /var/run/resque.pid
+    start program "/etc/init.d/resque start"
+    stop program "/etc/init.d/resque stop"
+    if 5 restarts within 5 cycles then timeout

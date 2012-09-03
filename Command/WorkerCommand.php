@@ -27,26 +27,100 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output) {
+        $pidFile = $this->getContainer()->getParameter('resque_pid');
+
         if ($input->getOption('daemon')) {
-            $pid = pcntl_fork();
+            $this->startDaemon(
+                $pidFile,
+                $output,
+                $input->getArgument('queue'),
+                $input->getOption('log'),
+                $input->getOption('interval'),
+                $input->getOption('forkCount')
+            );
+        }
+        elseif($input->getOption('stop')) {
+            $this->stopDaemon($pid, $output);
+        }
+        else {
+            $this->work(
+                $input->getArgument('queue'),
+                $input->getOption('log'),
+                $input->getOption('interval'),
+                $input->getOption('forkCount')
+            );
+        }
+    }
 
-            if($pid == -1) {
-                throw new \RuntimeException(sprintf('Could not fork worker %s', $i));
-            }
-            elseif($pid) {
-                $output->writeln('Worker started as daemon.');
-                return;
-            }
-            else {
+    private function startDaemon($pidFile, OutputInterface $output, $queue, $log, $interval, $forkCount)
+    {
+        if ($this->checkIsRunning($pidFile)) {
+            $output->writeln(array(
+                '<error></error>',
+                '<error>Resque worker seems allready started</error>',
+                '<error></error>'
+            ));
+            die();
+        }
 
+        $pid = pcntl_fork();
+        if ($pid == -1) {
+            syslog(1, 'Unable to start Resque worker as a daemon');
+            $output->writeln('Unable to start Resque worker as a daemon');
+            die();
+        } else if ($pid) {
+            // Le père
+            file_put_contents($pidFile, $pid);
+            $output->writeln('Resque worker started as a daemon');
+            die();
+        }
+        // Le fils
+        $this->work($queue, $log, $interval, $forkCount);
+    }
+
+    private function stopDaemon($pidFile, OutputInterface $output)
+    {
+        if ($this->checkIsRunning($pidFile)) {
+            $pid = file_get_contents($pidFile);
+            $p = new \Symfony\Component\Process\Process('kill -9 ' . $pid);
+            $p->run();
+            if ($p->isSuccessful()) {
+                $output->writeln('<info>Presenter stopped</info>');
+                return true;
+            } else {
+                $output->writeln('<error>Unable to stop presenter</error>');
+                die();
             }
         }
 
+        $output->writeln('<error>Presenter not running</error>');
+        return true;
+    }
+
+    private function checkIsRunning($pidFile)
+    {
+        if (!file_exists($pidFile)) {
+            return false;
+        }
+
+        $pid = file_get_contents($pidFile);
+        $p = new \Symfony\Component\Process\Process('ls /proc/' . $pid);
+        $p->run();
+        if (!$p->isSuccessful()) {
+            // Remove the pidFile
+            unlink($pidFile);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function work($queue, $log, $interval, $forkCount) {
         $worker = $this->getContainer()->get('glit_resque.worker_manager');
-        $worker->defineQueue($input->getArgument('queue'));
-        $worker->verbose($input->getOption('log'));
-        $worker->setInterval($input->getOption('interval'));
-        $worker->forkInstances($input->getOption('forkCount'));
+        $worker->defineQueue($queue);
+        $worker->verbose($log);
+        $worker->setInterval($interval);
+        $worker->forkInstances($forkCount);
         $worker->daemon();
     }
 }
