@@ -1,6 +1,6 @@
 {
-    "name": "glit/resque-bundle",
-    "description": "Adds php-resque to Symfony2",
+    "name": "webignition/resque-bundle",
+    "description": "Fork of glit/resque-bundle",
     "keywords": ["resque"],
     "type": "symfony-bundle",
     "license": "Apache",
@@ -8,7 +8,11 @@
         {
             "name": "William POTTIER",
             "email": "wpottier@allprogrammic.com"
-        }
+        },
+        {
+            "name": "Jon Cram",
+            "email": "jon@webignition.net"
+        }        
     ],
     "minimum-stability": "dev",
     "require": {
