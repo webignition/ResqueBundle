@@ -38,7 +38,7 @@ EOF
                 $input->getOption('log'),
                 $input->getOption('interval'),
                 $input->getOption('forkCount'),
-                $input->getOption('ignorePidCheck')
+                $input->getOption('ignoreDaemonPidCheck')
             );
         }
         elseif($input->getOption('stop')) {
