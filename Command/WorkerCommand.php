@@ -19,6 +19,7 @@ class WorkerCommand extends ContainerAwareCommand {
             ->addOption('forkCount', 'f', InputOption::VALUE_OPTIONAL, 'Fork count instances', 1)
             ->addOption('daemon', null, \Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Run worker as daemon')
             ->addOption('stop', null, \Symfony\Component\Console\Input\InputOption::VALUE_NONE, 'Run worker as daemon')
+            ->addOption('ignoreDaemonPidCheck', 1, InputOption::VALUE_OPTIONAL, 'Don\'t check if daemon is already running when starting')
             ->setHelp(<<<EOF
 Worker will run all jobs enqueue by PHPResqueBundle\Resque\Queue command line and defined by Queue class.
 You can run more than one queue per time. In this case input all queues names separated by commas on the 'queue' argument.
@@ -36,7 +37,8 @@ EOF
                 $input->getArgument('queue'),
                 $input->getOption('log'),
                 $input->getOption('interval'),
-                $input->getOption('forkCount')
+                $input->getOption('forkCount'),
+                $input->getOption('ignorePidCheck')
             );
         }
         elseif($input->getOption('stop')) {
@@ -52,9 +54,9 @@ EOF
         }
     }
 
-    private function startDaemon($pidFile, OutputInterface $output, $queue, $log, $interval, $forkCount)
+    private function startDaemon($pidFile, OutputInterface $output, $queue, $log, $interval, $forkCount, $ignoreDaemonPidCheck)
     {
-        if ($this->checkIsRunning($pidFile)) {
+        if ($ignoreDaemonPidCheck != 'true' && $this->checkIsRunning($pidFile)) {
             $output->writeln(array(
                 '<error></error>',
                 '<error>Resque worker seems allready started</error>',
