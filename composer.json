@@ -1,8 +1,8 @@
 {
     "name": "glit/resque-bundle",
+    "type": "symfony-bundle",
     "description": "Adds php-resque to Symfony2",
     "keywords": ["resque"],
-    "type": "symfony-bundle",
     "license": "Apache",
     "authors": [
         {
@@ -12,7 +12,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/framework-bundle": ">2.1.0",
+        "symfony/framework-bundle": ">2.2.0",
         "glit/resque": "dev-master"
     },
     "autoload": {
