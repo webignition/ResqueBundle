@@ -1,8 +1,8 @@
 {
     "name": "webignition/resque-bundle",
+    "type": "symfony-bundle",            
     "description": "Fork of glit/resque-bundle",
     "keywords": ["resque"],
-    "type": "symfony-bundle",
     "license": "Apache",
     "authors": [
         {
@@ -16,7 +16,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "symfony/framework-bundle": "2.1.*",
+        "symfony/framework-bundle": ">=2.2",
         "glit/resque": "dev-master"
     },
     "autoload": {
